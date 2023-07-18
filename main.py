@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 
+# Dictionary containing attractor specific parameters for generating the plot
 params = {
     'names': {
         1: "Lorenz",
@@ -30,8 +31,18 @@ params = {
     }
 }
 
-#steps = 4000
 dt = 0.01
+
+# Functions with constants for various strange attractors
+def lorenz(x, y, z, dt):
+    rho = 28.0
+    sigma = 10.0
+    beta = 8.0 / 3.0
+    dx = sigma * (y - x) * dt
+    dy = (x * (rho - z) - y) * dt
+    dz = (x * y - beta * z) * dt
+    return x + dx, y + dy, z + dz
+
 
 def aizawa(x, y, z, dt):
     alpha = 0.95
@@ -43,16 +54,6 @@ def aizawa(x, y, z, dt):
     dx = ((z - beta) * x - delta * y) * dt
     dy = (delta * x + (z - beta) * y) * dt
     dz = (gamma + alpha * z - (z * z * z / 3) - (x * x + y * y) * (1 + epsilon * z) + zeta * z * x * x * x) * dt
-    return x + dx, y + dy, z + dz
-
-
-def lorenz(x, y, z, dt):
-    rho = 28.0
-    sigma = 10.0
-    beta = 8.0 / 3.0
-    dx = sigma * (y - x) * dt
-    dy = (x * (rho - z) - y) * dt
-    dz = (x * y - beta * z) * dt
     return x + dx, y + dy, z + dz
 
 
@@ -89,6 +90,7 @@ def dadras(x, y, z, dt):
     return x + dx, y + dy, z + dz
 
 '''
+# Can't figure out initial conditions for Dequan Li so its still WIP
 def dequan_li(x, y, z, dt):
     a = 40.0
     c = 1.833
@@ -102,13 +104,15 @@ def dequan_li(x, y, z, dt):
     return x + dx, y + dy, z + dz
 '''
 
+# Generates plot coordinates and the 3D plot
 def attractor_processing(attractor_num):
     global view
 
-    if attractor_num == "off":
+    # To exit program
+    if attractor_num == 6:
         view = False
 
-    elif attractor_num in [1,2,3,4,5,6]:
+    elif attractor_num in [1,2,3,4,5]:
 
         x, y, z = [], [], []
         coords = []
@@ -130,7 +134,7 @@ def attractor_processing(attractor_num):
         var = globals()[attractor]
         pointnum = params['steps'][attractor_num]
 
-        # Trajectory
+        # Creating empty arrays [size: number of plot points * 3 (for each of the x,y,z coordinates)] to store coordinates of each Trajectory
         for i in range(numTraj):
             coords.append(np.zeros((pointnum, 3)))
 
@@ -153,6 +157,7 @@ def attractor_processing(attractor_num):
             ax.plot(coords[i][:, 0], coords[i][:, 1], coords[i][:, 2], label="Trajectory %d" % (i + 1))
             plt.draw()
 
+        # Displaying plot
         plt.legend()
         plt.show()
 
@@ -162,13 +167,14 @@ def attractor_processing(attractor_num):
         print("Invalid input. Try again.")
 
 
+# Input Loop
 view = True
 while view:
     # Printing Attractors
     for key in params['names']:
         print(f"{key}: {params['names'][key]}")
+        
     attractor_num = int(input("Enter among 1-5 for the strange attractor you want to view or 'off' to terminate program: "))
-
     attractor_processing(attractor_num)
 
     continue
